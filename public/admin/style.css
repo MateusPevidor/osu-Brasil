@@ -1,0 +1,19 @@
+blockquote {
+  border-left: 5px solid #009b3a;
+}
+
+.tabs .tab a {
+  color: rgba(72, 155, 104, 0.7);
+}
+
+.tabs .tab a:focus, .tabs .tab a:focus.active {
+  background-color: rgba(196, 245, 211, 0.2);
+}
+
+.tabs .tab a:hover, .tabs .tab a.active {
+  color: #6eee94;
+}
+
+.tabs .indicator {
+  background-color: #b2f6b8;
+}

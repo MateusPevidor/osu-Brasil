@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>osu!Brasil</title>
+
+  <!-- Links -->
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="../logoB.png">
+
+  <!-- Scripts -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+  <script src="https://mike-shared.firebaseapp.com/webchannel-proxy-issue/firebase-firestore.js"></script>
+  <script src="firebaseInit.js"></script>
+  <script src="script.js"></script>
+
+  <!-- 
+    RESET
+    change line 18 to <script src="https://www.gstatic.com/firebasejs/5.7.3/firebase.js"></script>
+    remove line 19
+  -->
+
+</head>
+
+<body style="width: 100%; height: 100%; margin: 0; padding: 0;">
+  <div class="container">
+    <!-- Header -->
+    <div class="row">
+      <blockquote><h3>Administração</h3></blockquote>
+    </div>
+
+    <!-- Modal Trigger -->
+    <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Inserir dados</a>
+
+    <button class="waves-effect waves-light btn" id="updateDataBtn">Atualizar Dados</button>
+
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal">
+      <div class="modal-content">
+        <!-- Tabs -->
+        <div class="row">
+          <div class="col s6 offset-s3">
+            <ul class="tabs">
+              <li class="tab col s4" id="tabPlayer"><a class="active" href="#test1">Jogador</a></li>
+              <li class="tab col s4" id="tabBeatmap"><a href="#test2">Mapa</a></li>
+              <li class="tab col s4" id="tabNews"><a href="#test3">Notícia</a></li>
+            </ul>
+          </div>
+        </div>
+        <!-- Forms -->
+        <div class="row">
+          <div class="col s9 offset-s2">
+            <!-- Username Form -->
+            <div id="test1">
+              <form>
+                <div class="row">
+                  <!-- Search Button / Loading animation -->
+                  <!--<div class="col s1 pull-s1">
+                    <br>
+                    <div id="searchBtn_userForm_div">
+                      <span class="badge"><a class="waves-effect waves-light btn-small disabled" id="searchBtn_userForm"><i class="fas fa-search"></i></a></span>
+                    </div>
+                    <div id="preloader_userForm_div" style="margin-left: -20px;">
+                      <div class="preloader-wrapper small active">
+                        <div class="spinner-layer spinner-green-only">
+                          <div class="circle-clipper left">
+                            <div class="circle"></div>
+                          </div><div class="gap-patch">
+                            <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>-->
+                  <!-- Inputs -->
+                  <div class="col s5 input-field">
+                    <input id="username_userForm" type="text" class="validate" oninput="getDataFromOsu(1)">
+                    <label for="username_userForm">Nome de Usuário</label>
+                  </div>
+                  <div class="col s3 input-field">
+                    <input placeholder="Ex: #1" id="countryRank_userForm" type="text" class="validate" disabled>
+                    <label for="countryRank_userForm">Colocação Regional</label>
+                  </div>
+                  <div class="col s3 input-field">
+                    <input placeholder="Ex: #1" id="globalRank_userForm" type="text" class="validate" disabled>
+                    <label for="globalRank_userForm">Colocação Global</label>
+                  </div>
+                  <div class="col s4 input-field">
+                    <input placeholder="Ex: 14516pp" id="performancePoints_userForm" type="text" class="validate" disabled>
+                    <label for="performancePoints_userForm">Performance Points</label>
+                  </div>
+                  <div class="col s3 input-field">
+                    <input placeholder="Ex: 99.26%" id="accuracy_userForm" type="text" class="validate" disabled>
+                    <label for="accuracy_userForm">Precisão</label>
+                  </div>
+                  <div class="col s4 input-field">
+                    <input placeholder="Ex: 37654" id="playcount_userForm" type="text" class="validate" disabled>
+                    <label for="playcount_userForm">Vezes Jogadas</label>
+                  </div>
+                  <div class="col s4 input-field">
+                    <input placeholder="Ex: 37654" id="level_userForm" type="text" class="validate" disabled>
+                    <label for="level_userForm">Nível</label>
+                  </div>
+                  <div class="col s7 input-field">
+                    <input placeholder="Ex: 2015-07-25 12:37:45" id="joinDate_userForm" type="text" class="validate" disabled>
+                    <label for="joinDate_userForm">Registrado em</label>
+                  </div>
+                  
+                  
+                </div>
+              </form>
+            </div>
+            <div id="test2" class="col s2">Test 2</div>
+            <div id="test3" class="col s2">Test 3</div>
+            <span id="submitType" style="display: none">1</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="margin-bottom: 2vh;">
+        <row>
+          <div class="preloader-wrapper small active" id="preloader_submit_div" style="margin-bottom: -1.55vh; margin-right: 6vh;">
+            <div class="spinner-layer spinner-green-only">
+              <div class="circle-clipper left">
+                <div class="circle"></div>
+              </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+            </div>
+          </div>
+            <button class="btn waves-effect waves-light" id="submit">Cadastrar
+              <i class="material-icons right" style="margin-left: 0.5vh;">send</i>
+            </button>
+          <a href="#!" class="modal-close waves-effect waves-green btn-flat">Fechar</a>
+        </row>
+        
+      </div>
+    </div>
+
+    
+  </div>
+
+
+  
+</body>
+
+</html>
