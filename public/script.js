@@ -22,12 +22,40 @@ $(document).ready(function(){
     }, 650);
   });
 
-  /*$('#topPlayers').on('click', function(){
-    $('html, body').animate({
-        scrollTop: $('#third').offset().top
-    }, 500);
-  });*/
+  showContent();
+  
+});
 
+function showContent() {
+  writeNews();
+  fillTopPlayersTable();
+}
+
+function writeNews() {
+  db.collection("news").get().then((query) => {
+    let news = new Array();
+    let i;
+    let str = '';
+    query.forEach((data) => {
+      news.push(data.data());
+    });
+
+    news.sort(function (a, b) {
+      if (a.date > b.date) return -1;
+      else if (a.date < b.date) return 1;
+      else return 0;
+    });
+
+    for (i = 0; i < 4; i++){
+      str += getCardStructure(news[i].title, news[i].body, news[i].imgSrc, i % 2);
+    }
+    $('#news-section').append(str);
+
+    
+  });
+}
+
+function fillTopPlayersTable() {
   db.collection("users").get().then((query) => {
     query.forEach((data) => {
       let pp_raw = data.data().pp_raw;
@@ -45,7 +73,7 @@ $(document).ready(function(){
     appendToTable();
     writePagination();
   });
-});
+}
 
 function appendToTable(){
   $('#top-players-table-tbody').empty();
@@ -70,7 +98,6 @@ function writePagination(){
     Information.numberOfPages = parseInt(Information.playerInfo.length/10)+1;
   }
   
-  console.log(Information.playerInfo.length);
   $('#pages').empty();
   $('#pages').append('<li class="disabled" id="pagination-previousPage" onclick="previousPage()"><a href="#!"><i class="material-icons">chevron_left</i></a></li>');
   //$('#pages').append('<li class="waves-effect active" onclick="changePage(1)" id="pagination-page1"><a href="#!">1</a></li>');
@@ -156,4 +183,33 @@ function sortTable(sortType) {
     
   })
   changePage(1);
+}
+
+function getCardStructure(title, body, imgSrc, isRight) {
+  let str = '';
+  if (isRight == 0){
+    str += '<div class="row">';
+  }
+  str += '<div class="col s4';
+  if (isRight == 0){
+    str += ' offset-s2';
+  }
+  str += '">';
+  str += '<div class="card">';
+  str += '<div class="card-image waves-effect waves-block waves-light">';
+  str += '<img class="activator" src="' + imgSrc + '">';
+  str += '</div>';
+  str += '<div class="card-content">';
+  str += '<span class="card-title activator grey-text text-darken-4">' + title + '<i class="material-icons right">more_vert</i></span>';
+  str += '</div>';
+  str += '<div class="card-reveal">';
+  str += '<span class="card-title grey-text text-darken-4">' + title + '<i class="material-icons right">close</i></span>';
+  str += '<p>' + body + '</p>';
+  str += '</div></div></div>';
+
+  if (isRight == 1){
+    str += '</div>';
+  }
+
+  return str;
 }
