@@ -127,7 +127,46 @@
                 </div>
               </form>
             </div>
-            <div id="test2" class="col s2">Test 2</div>
+            <div id="test2">
+              <form>
+                <div class="row">
+                  <!-- Inputs -->
+                  <div class="col s4 input-field">
+                    <input id="beatmapLink_beatmapForm" type="text" class="validate" oninput="getBeatmapInfo()">
+                    <label for="beatmapLink_beatmapForm">Link do Beatmap</label>
+                  </div>
+                  <div class="col s4 input-field">
+                    <input placeholder="Ex: Sotarks" id="mapper_beatmapForm" type="text" class="validate" disabled>
+                    <label for="mapper_beatmapForm">Mapper</label>
+                  </div>
+                  <div class="col s4 input-field">
+                    <input placeholder="Ex: Ranqueado" id="status_beatmapForm" type="text" class="validate" disabled>
+                    <label for="status_beatmapForm">Status</label>
+                  </div>
+                  <div class="col s5 input-field">
+                    <input placeholder="Ex: Panda Eyes & Teminite" id="artist_beatmapForm" type="text" class="validate" disabled>
+                    <label for="artist_beatmapForm">Artista</label>
+                  </div>
+                  <div class="col s7 input-field">
+                    <input placeholder="Ex: Immortal Flame (feat. Anna Yvette)" id="title_beatmapForm" type="text" class="validate" disabled>
+                    <label for="title_beatmapForm">Título</label>
+                  </div>
+                  <div class="col s4 input-field">
+                    <input placeholder="Ex: 9" id="diffs_beatmapForm" type="text" class="validate" disabled>
+                    <label for="diffs_beatmapForm">Dificuldades</label>
+                  </div>
+                  <div class="col s4 input-field">
+                    <input placeholder="Ex: 405900" id="playcount_beatmapForm" type="text" class="validate" disabled>
+                    <label for="playcount_beatmapForm">Vezes Jogadas</label>
+                  </div>
+                  <div class="col s4 input-field">
+                    <input placeholder="Ex: 1467" id="favourites_beatmapForm" type="text" class="validate" disabled>
+                    <label for="favourites_beatmapForm">Favoritos</label>
+                  </div>
+                  <span id="beatmapID" style="display: none"></span>
+                </div>
+              </form>
+            </div>
               
             <div id="test3">
               <form>

@@ -16,11 +16,17 @@ $(document).ready(function(){
         scrollTop: $('#topPlayers-section').offset().top
     }, 650);
   });
+  $('#nav-beatmaps').on('click', function(){
+    $('html, body').animate({
+        scrollTop: $('#beatmaps-section').offset().top
+    }, 650);
+  });
   $('#nav-news').on('click', function(){
     $('html, body').animate({
         scrollTop: $('#news-section').offset().top
     }, 650);
   });
+  
 
   showContent();
   
@@ -28,6 +34,7 @@ $(document).ready(function(){
 
 function showContent() {
   writeNews();
+  writeBeatmaps();
   fillTopPlayersTable();
 }
 
@@ -45,13 +52,41 @@ function writeNews() {
       else if (a.date < b.date) return 1;
       else return 0;
     });
-
-    for (i = 0; i < 4; i++){
-      str += getCardStructure(news[i].title, news[i].body, news[i].imgSrc, i % 2);
+    let len = 4;
+    if (news.length < 4){
+      len = news.length;
+    }
+    for (i = 0; i < len; i++){
+      str += getNewsCardStructure(news[i].title, news[i].body, news[i].imgSrc, i % 2);
     }
     $('#news-section').append(str);
+  });
+}
 
-    
+function writeBeatmaps() {
+  db.collection("beatmaps").get().then((query) => {
+    let beatmaps = new Array();
+    let i;
+    let str = '';
+    query.forEach((data) => {
+      beatmaps.push(data.data());
+    });
+
+    beatmaps.sort(function (a, b) {
+      if (a.insertion_date > b.insertion_date) return -1;
+      else if (a.insertion_date < b.insertion_date) return 1;
+      else return 0;
+    });
+
+    let len = 8;
+    if (beatmaps.length < 8){
+      len = beatmaps.length;
+    }
+    for (i = 0; i < len; i++){
+      str += getBeatmapCardStructure(beatmaps[i], i % 4);
+    }
+    $('#beatmaps-section').append(str);
+
   });
 }
 
@@ -185,7 +220,7 @@ function sortTable(sortType) {
   changePage(1);
 }
 
-function getCardStructure(title, body, imgSrc, isRight) {
+function getNewsCardStructure(title, body, imgSrc, isRight) {
   let str = '';
   if (isRight == 0){
     str += '<div class="row">';
@@ -208,6 +243,38 @@ function getCardStructure(title, body, imgSrc, isRight) {
   str += '</div></div></div>';
 
   if (isRight == 1){
+    str += '</div>';
+  }
+
+  return str;
+}
+
+function getBeatmapCardStructure(beatmap, isFirst){
+  let str = '';
+  if (isFirst == 0){
+    str += '<div class="row">';
+  }
+  str += '<div class="col s2';
+  if (isFirst == 0){
+    str += ' offset-s2';
+  }
+  str += '">';
+  str += '<div class="card">';
+  str += '<div class="card-image waves-effect waves-block waves-light">';
+  str += '<img class="activator" src="' + beatmap.imgSrc + '">';
+  str += '</div>';
+  str += '<div class="card-content">';
+  str += '<span class="card-title beatmap-card activator grey-text text-darken-4">' + beatmap.artist + '-' + beatmap.title + '</span>';
+  str += '<p><a href="https://osu.ppy.sh/s/' + beatmap.id + '" target="_blank">Ver no site</a> <span class="mapper-name">' + beatmap.mapper + '</span></p>';
+  str += '</div>';
+  str += '<div class="card-reveal">';
+  str += '<span class="card-title grey-text text-darken-4" style="font-size: 115%;">' + beatmap.artist + '-' + beatmap.title + '<i class="material-icons right">close</i></span>';
+  str += '<p>Vezes Jogadas: ' + beatmap.playcount + '</p>';
+  str += '<p>Favoritos: ' + beatmap.favourites + '</p>';
+  str += '<p>Mapeado por: <a href="https://osu.ppy.sh/u/' + beatmap.mapper + '" target="_blank">' + beatmap.mapper + '</a></p>';
+  str += '</div></div></div>';
+
+  if (isFirst == 3){
     str += '</div>';
   }
 

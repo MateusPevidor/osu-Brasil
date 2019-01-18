@@ -167,5 +167,16 @@ table, th, td {
   color: #fff;
   text-align: center;
   margin: 0 auto;
-  
+}
+
+.beatmap-card {
+  font-size: 115% !important;
+  text-overflow: ellipsis;
+  white-space:nowrap;
+  overflow:hidden;
+}
+
+.mapper-name {
+  float: right;
+  color: rgba(0, 0, 0, 0.4);
 }

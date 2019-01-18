@@ -65,6 +65,27 @@ function submit(){
         M.toast({html: 'Jogador já cadastrado.'});
       }
     });
+  } else if (submitType == 2) {
+    let beatmap = getBeatmapInfoFromForm();
+    if (beatmap == null)
+      return;
+    db.collection("beatmaps").doc().set(beatmap)
+    .then(function() {
+      $('#submit').show();
+      $('#preloader_submit_div').hide();
+      M.toast({html: 'Beatmap inserido com sucesso!'});
+      $('#beatmapLink_beatmapForm').val('');
+      $('#mapper_beatmapForm').val('');
+      $('#status_beatmapForm').val('');
+      $('#artist_beatmapForm').val('');
+      $('#title_beatmapForm').val('');
+      $('#diffs_beatmapForm').val('');
+      $('#playcount_beatmapForm').val('');
+      $('#favourites_beatmapForm').val('');
+    })
+    .catch(function() {
+      M.toast({html: 'Erro ao inserir beatmap.'});
+    });
   } else if ( submitType == 3) {
     let news = getNewsInfo();
     if (news == null)
@@ -164,6 +185,89 @@ function getDataFromOsu(type) {
   });
 }
 
+function getBeatmapInfo() {
+  let input = $('#beatmapLink_beatmapForm').val();
+  let isDiff = false;
+  if (input == '')
+    return;
+  let beatmap_id;
+  if (input.includes('/s/')){
+    beatmap_id = input.substr(input.indexOf('/s/') + 3, input.length);
+  } else if (input.includes('/b/')){
+    beatmap_id = input.substr(input.indexOf('/b/') + 3, input.length);
+    isDiff = true;
+  }
+  if (beatmap_id.includes('&')){
+    beatmap_id = beatmap_id.substr(0, beatmap_id.indexOf('&'));
+  }
+
+  if (isDiff){
+    $.getJSON('https://osu.ppy.sh/api/get_beatmaps?k=22a87727758fee0a858b67dc7487cdbba3337ed4&b=' + beatmap_id, function(data){
+      if (data.length == 0)
+        return;
+      beatmap_id = data[0].beatmapset_id;
+      requestBeatmapInfo(beatmap_id);
+    });
+  } else {
+    requestBeatmapInfo(beatmap_id);
+  }
+}
+
+function requestBeatmapInfo(id) {
+  $('#beatmapID').text(id);
+  let beatmap;
+  $.getJSON('https://osu.ppy.sh/api/get_beatmaps?k=22a87727758fee0a858b67dc7487cdbba3337ed4&s=' + id, function(data){
+    if (data.length == 0)
+      return;
+    beatmap = {
+      creator: data[0].creator,
+      status: '',
+      artist: data[0].artist,
+      title: data[0].title,
+      diffs: data.length,
+      playcount: 0,
+      favourites: data[0].favourite_count
+    }
+    switch(data[0].approved){
+      case '4':
+        beatmap.status = 'Loved';
+        break;
+      case '3':
+        beatmap.status = 'Qualificado';
+        break;
+      case '2':
+        beatmap.status = 'Aprovado';
+        break;
+      case '1':
+        beatmap.status = 'Ranqueado';
+        break;
+      case '0':
+        beatmap.status = 'Pendente';
+        break;
+      case '-1':
+        beatmap.status = 'Work in Progress';
+        break;
+      case '-2':
+        beatmap.status = 'Cemitério';
+        break;
+    }
+    for (let i = 0; i < data.length; i++){
+      beatmap.playcount += parseInt(data[i].playcount);
+    }
+    setBeatmapInfo(beatmap);
+  });
+}
+
+function setBeatmapInfo(beatmap){
+  $('#mapper_beatmapForm').val(beatmap.creator);
+  $('#status_beatmapForm').val(beatmap.status);
+  $('#artist_beatmapForm').val(beatmap.artist);
+  $('#title_beatmapForm').val(beatmap.title);
+  $('#diffs_beatmapForm').val(beatmap.diffs);
+  $('#playcount_beatmapForm').val(beatmap.playcount);
+  $('#favourites_beatmapForm').val(beatmap.favourites);
+}
+
 function updateData(){
   let progress = 0;
   db.collection("users").get().then((query) => {
@@ -201,7 +305,6 @@ function updateData(){
           "pp_rank" : players[i].pp_rank,
           "pp_raw" : players[i].pp_raw
         });
-        console.log('asd');
         progress += 100/players.length;
         $('#progressBar').css('width', progress + '%');
         if (i == players.length-1) {
@@ -253,6 +356,34 @@ function getNewsInfo(){
               date: getTodaysDate()
             };
   return news;
+}
+
+function getBeatmapInfoFromForm(){
+  if ($('#beatmapID').text() == "" ||
+      $('#mapper_beatmapForm').val() == "" ||
+      $('#status_beatmapForm').val() == "" ||
+      $('#artist_beatmapForm').val() == "" ||
+      $('#title_beatmapForm').val() == "" ||
+      $('#diffs_beatmapForm').val() == "" ||
+      $('#playcount_beatmapForm').val() == "" ||
+      $('#favourites_beatmapForm').val() == "") {
+    return null;
+  }
+
+  let beatmap = {
+    id: $('#beatmapID').text(),
+    mapper: $('#mapper_beatmapForm').val(),
+    artist: $('#artist_beatmapForm').val(),
+    title: $('#title_beatmapForm').val(),
+    imgSrc : '',
+    playcount: $('#playcount_beatmapForm').val(),
+    favourites: $('#favourites_beatmapForm').val(),
+    insertion_date: getTodaysDate()
+  }
+  
+  beatmap.imgSrc = 'https://b.ppy.sh/thumb/' + $('#beatmapID').text() + 'l.jpg';
+
+  return beatmap;
 }
 
 function checkEnabled(){
