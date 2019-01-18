@@ -219,43 +219,57 @@ function requestBeatmapInfo(id) {
   $.getJSON('https://osu.ppy.sh/api/get_beatmaps?k=22a87727758fee0a858b67dc7487cdbba3337ed4&s=' + id, function(data){
     if (data.length == 0)
       return;
-    beatmap = {
-      creator: data[0].creator,
-      status: '',
-      artist: data[0].artist,
-      title: data[0].title,
-      diffs: data.length,
-      playcount: 0,
-      favourites: data[0].favourite_count
-    }
-    switch(data[0].approved){
-      case '4':
-        beatmap.status = 'Loved';
-        break;
-      case '3':
-        beatmap.status = 'Qualificado';
-        break;
-      case '2':
-        beatmap.status = 'Aprovado';
-        break;
-      case '1':
-        beatmap.status = 'Ranqueado';
-        break;
-      case '0':
-        beatmap.status = 'Pendente';
-        break;
-      case '-1':
-        beatmap.status = 'Work in Progress';
-        break;
-      case '-2':
-        beatmap.status = 'Cemitério';
-        break;
-    }
-    for (let i = 0; i < data.length; i++){
-      beatmap.playcount += parseInt(data[i].playcount);
-    }
-    setBeatmapInfo(beatmap);
+      $.getJSON('https://osu.ppy.sh/api/get_user?k=22a87727758fee0a858b67dc7487cdbba3337ed4&u=' + data[0].creator, function(userInfo){
+        if (userInfo[0].country != 'BR'){
+          M.toast({html: 'Mapper estrangeiro!'});
+          return;
+        }
+      
+        beatmap = getBeatmapObject(data);
+        setBeatmapInfo(beatmap);
+      });
   });
+}
+
+function getBeatmapObject(data){
+  let beatmap = {
+    creator: data[0].creator,
+    creator_id: data[0].creator_id,
+    status: '',
+    artist: data[0].artist,
+    title: data[0].title,
+    diffs: data.length,
+    playcount: 0,
+    favourites: data[0].favourite_count
+  }
+  switch(data[0].approved){
+    case '4':
+      beatmap.status = 'Loved';
+      break;
+    case '3':
+      beatmap.status = 'Qualificado';
+      break;
+    case '2':
+      beatmap.status = 'Aprovado';
+      break;
+    case '1':
+      beatmap.status = 'Ranqueado';
+      break;
+    case '0':
+      beatmap.status = 'Pendente';
+      break;
+    case '-1':
+      beatmap.status = 'Work in Progress';
+      break;
+    case '-2':
+      beatmap.status = 'Cemitério';
+      break;
+  }
+  for (let i = 0; i < data.length; i++){
+    beatmap.playcount += parseInt(data[i].playcount);
+  }
+
+  return beatmap;
 }
 
 function setBeatmapInfo(beatmap){
@@ -266,6 +280,7 @@ function setBeatmapInfo(beatmap){
   $('#diffs_beatmapForm').val(beatmap.diffs);
   $('#playcount_beatmapForm').val(beatmap.playcount);
   $('#favourites_beatmapForm').val(beatmap.favourites);
+  $('#creatorID').text(beatmap.creator_id);
 }
 
 function updateData(){
@@ -373,6 +388,7 @@ function getBeatmapInfoFromForm(){
   let beatmap = {
     id: $('#beatmapID').text(),
     mapper: $('#mapper_beatmapForm').val(),
+    mapper_id: $('#creatorID').text(),
     artist: $('#artist_beatmapForm').val(),
     title: $('#title_beatmapForm').val(),
     imgSrc : '',

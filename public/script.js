@@ -271,7 +271,7 @@ function getBeatmapCardStructure(beatmap, isFirst){
   str += '<span class="card-title grey-text text-darken-4" style="font-size: 115%;">' + beatmap.artist + '-' + beatmap.title + '<i class="material-icons right">close</i></span>';
   str += '<p>Vezes Jogadas: ' + beatmap.playcount + '</p>';
   str += '<p>Favoritos: ' + beatmap.favourites + '</p>';
-  str += '<p>Mapeado por: <a href="https://osu.ppy.sh/u/' + beatmap.mapper + '" target="_blank">' + beatmap.mapper + '</a></p>';
+  str += '<p>Mapeado por: <a href="https://osu.ppy.sh/u/' + beatmap.mapper_id + '" target="_blank">' + beatmap.mapper + '</a></p>';
   str += '</div></div></div>';
 
   if (isFirst == 3){
